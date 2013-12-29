@@ -5,12 +5,15 @@ var room = require("../services/room");
 var io = {};
 var _ = require("underscore");
 
+var express = require('express');
+
 var uid = (function() {
 	var i = 1;
 	return function() {
 		return i++;
 	}
 })();
+var _options={};
 
 var routes = exports = module.exports = {
 	index: function(req, res) {
@@ -27,7 +30,10 @@ var routes = exports = module.exports = {
 		res.render('room');
 	},
 	host: function(req, res) {
-		res.render('host');
+		res.render('host',_options);
+	},
+	setOptions: function(options) {
+		_options=options;
 	},
 	roomDetail: function(req, res) {
 		res.set("Content-Type", "javascript/json");

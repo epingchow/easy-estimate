@@ -1,0 +1,50 @@
+<% include ./_head %>
+<% include ./_nav %>
+
+<div style="padding-top:50px;">
+	<div class="jumbotron">
+		  <div class="container">
+	        <h2>配置</h2>
+	      </div>
+	</div>
+</div>
+<div class="container">
+<div class="pull-right" style="width:400px;">
+  <div class="alert alert-info">
+      <h4>端口</h4>
+      <p>设置服务器的访问端口，注意80端口容易与其他服务冲突，建议使用 3000</p>
+      <hr>
+      <h4>服务器地址</h4>
+      <p>服务器的访问地址，配置错误将导致无法使用二维码扫描进入房间的功能，格式为 http://address:port</p>
+      <hr>
+      <h4>手动修改</h4>
+      <p>配置成功保存后，将中程序目录下生成config-local.js配置文件，可进行手动配置</p>
+      <hr>
+      <h4>修改后需要重启</h4>
+  </div>
+</div>
+<div style="width:400px;margin-right:400px;">
+
+	<form  role="form" action="/config" method="POST">
+  <div class="form-group">
+    <label for="port" class="control-label">端口</label>
+    <div>
+      <input type="text" class="form-control" name="port" id="port" placeholder="端口" value="<%= options.port %>">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputPassword3" class="control-label">服务器地址</label>
+    <div>
+      <input type="url" class="form-control" id="url" placeholder="服务器地址" name="url" value="<%= options.url %>">
+    </div>
+  </div>
+  <div class="form-group" style="margin-top:30px;">
+    <div>
+      <button type="submit" class="btn btn-primary btn-block">提交</button>
+    </div>
+  </div>
+</form>
+</div>
+</div>
+ 
+<% include ./_foot %>

@@ -1,0 +1,149 @@
+<% include ./_head %>
+<% include ./_nav %>
+<script type="text/javascript" src="/lib/jquery.qrcode.min.js"></script>
+<link rel="stylesheet" href="/css/d3.css">
+<div ng-controller="HostCtrl">
+<div style="padding-top:50px;">
+  <div style="padding:0;width:240px;float:left;">
+    <div style="background-color:#fff;height:1000px;padding:10px;color:#08C !important;border-right:solid 1px #ccc;">
+      <div style="width:200px;margin:0 auto;margin-top:20px;">
+        <div id="qrcode"></div>
+        <h4><i class="graphicon graphicon-iphone"></i>使用腾讯浏览器扫一扫</h4>
+      </div>
+      <hr>
+      <button ng-click="startEstimate()" class="btn btn-primary btn-block">开始估算</button>
+      <button class="btn btn-default btn-block" ng-click="makeReport()" >结束估算、开始统计</button>
+      <div style="margin-top:40px;"></div>
+      <h4><i class="graphicon graphicon-iphone"></i>房间人数 <span style="font-size:30px;">{{ room.num }}</span></h4>
+      <div class="list-group">
+        <a  ng-repeat="user in room.users " href="#" class="list-group-item">
+          {{ user.name }}
+        </a>
+      </div>
+      <button ng-click="clear();" class="btn btn-default btn-block">清空房间</button>
+    </div>
+  </div>
+  <div style="padding:0;margin-left:240px;position:relative;height:1000px;background-color:#f9f9f9;">
+    <div ng-include="panelUrl" ng-show="status == 'readme' "></div>
+    <div ng-show="status == 'estimated' " style="padding:10px 20px;text-align:right;">
+      <div class="pull-right" style="width:200px;color:#08C;">
+        <div class="panel panel-primary">
+          <div style="padding:0 10px;">
+            <h1 title="弃权不纳入平均统计"><small>平均</small> <span style="font-size:60px;" ng-bind = 'room.users | usersAvg'></span></h1>
+            <table class="table table-striped"> 
+              <tr>
+                <td><span class="label label-default">弃权</span></td>
+                <td><span ng-bind = 'room.users | abstainCount'></span></td>
+              </tr>
+              <tr>
+                <td><span class="label label-danger">max</span></td>
+                <td> <span ng-bind = 'room.users | maxUserName'></span> <span ng-bind = 'room.users | maxUserPoint'></span></td>
+              </tr>
+              <tr>
+                <td><span class="label label-info">min</span></td>
+                <td><span ng-bind = 'room.users | minUserName'></span> <span ng-bind = 'room.users | minUserPoint'></span></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div style="margin-right:200px;">
+        <svg id="svg" width="100%" height="280px"></svg>
+      </div>
+      <hr style="margin:0px;">
+    </div>
+    <div class="estimate-list" ng-hide="status == 'readme'" id="estimate-list" style="position:relative;z-index:10;">
+      <div class="estimate" ng-repeat="user in room.users ">
+        <div class="point" ng-bind-html='user | userEstimate:status'>
+        </div>
+        <div class="name">{{ user.name }}</div>
+      </div>
+    </div>
+
+  </div>
+  
+</div>
+<script type="text/javascript">
+  jQuery(function(){
+    jQuery('#qrcode').qrcode({width:200,height:200,text:"http://192.168.1.6:3000/room"});
+  })
+</script>
+
+<script type="text/javascript" src='/lib/d3.v3.min.js'></script>
+<script>
+
+var Bar = function(el){
+  var width=$("#svg").width(),height=250;
+  this.render = function(users){
+    var data = _.filter(users,function(user){
+      return user.point>=0;
+    });
+    data.sort(function(a,b){
+      return a.point < b.point;
+    })
+    var size = width / data.length;
+    var columnWidth = Math.min(size-5,80);
+    var x = (function(){
+      var map = {};
+      $.each(data, function(i,user){
+        map[user.id]=size*i;
+      });
+      return function(id){
+        return map[id];
+      }
+    })();
+    var y = (function(){
+      var max = Math.max(_.max(data,function(user){return user.point}).point);
+      return function(val){
+        var h=(height-20);
+        return h - val/max*h;
+      }
+      console.log(val);
+    })();
+
+    var svg =  d3.select("#svg");
+
+    var text = svg.selectAll(".text").data(data);
+    text.enter()
+      .append("text")
+      .attr("class", "text");
+
+    text.exit().remove();
+
+    text.transition()
+      .attr("x", function(d) { return x(d.id) + (columnWidth/2); })
+      .attr("y", function(d) { return height + 20 })
+      .text(function(d){console.log(0); return  d.name})
+      .style("text-anchor", "middle");
+
+
+    var value = svg.selectAll(".value").data(data);
+    value.enter()
+      .append("text")
+      .attr("class", "text");
+
+    value.exit().remove();
+
+    value.transition()
+      .attr("x", function(d) { return x(d.id) + (columnWidth/2); })
+      .attr("y", function(d) { return  y(d.point) +15 })
+      .text(function(d){return  d.point})
+      .style("text-anchor", "middle");
+
+    var bar = svg.selectAll(".bar").data(data);
+      
+        bar.enter().append("rect")
+          .attr("class", "bar");
+
+        bar.exit().remove();
+
+        bar.transition().attr("x", function(d) { return x(d.id); })
+          .attr("width", columnWidth)
+          .attr("y", function(d) { return y(d.point) + 20; })
+          .attr("height", function(d) { return height -20 - y(d.point); });
+
+    }
+}
+
+</script>
+<% include ./_foot %>

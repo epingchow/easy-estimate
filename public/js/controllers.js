@@ -48,7 +48,6 @@ controller('HostCtrl', ['$scope', '$http', 'socket',
 			socket.emit("host:clear");
 		}
 		$scope.panelUrl = '/partials/readme.html';
-
 		$scope.startEstimate =function(){
 			$scope.panelUrl="";
 			$scope.status="estimating";
@@ -58,17 +57,31 @@ controller('HostCtrl', ['$scope', '$http', 'socket',
 			$scope.status="estimated";
 			$scope.bar.render($scope.room.users);
 		}
+		$(function(){
+			$(document).keypress(function(evt){
+				if(evt.keyCode=='13'){
+					if($scope.status=="estimating"){
+						$scope.makeReport();
+					}else{
+						$scope.startEstimate();
+					}
+					$scope.$apply();
+				}
+			})
+		})
 	}
 ]).
 controller('RoomCtrl', ['$scope', 'socket',
 	function($scope, socket) {
 		// prompt dialog
-		$scope.name="王大锤";
+		var _prefix =['羞涩的','神奇','只手遮天',"好色","威猛","奇怪的","风流的","疯癫的","面瘫","猪狗不如","一把正经","土豪","深井冰"];
+		var _names = ["王大锤","李狗蛋","楚中天","本拉登","小朋友","小师妹","老头子","小明","老王","奥巴马"];
+		$scope.name=_prefix[parseInt(Math.random()*1000)%_prefix.length] + _names[parseInt(Math.random()*1000)%_names.length];
 		$scope.point = -1;
 		$scope.point_0 = '';
 		$scope.point_1 = '';
 		$scope.abstain = false;
-
+		$scope.ready=false;
 		$scope.setPoint0 = function(num){
 			if(num<0)$scope.point_1=0;
 			$scope.point_0 = num;
@@ -82,11 +95,12 @@ controller('RoomCtrl', ['$scope', 'socket',
 		}
 
 		socket.on('ready', function() {
+			$scope.ready=true;
 			var name=prompt("请输入你的名字",$scope.name);
 			if(name != null)$scope.name=name;
 			socket.emit('join',$scope.name);
 			socket.on("join:success", function() {
-				console.log("success");
+				//console.log("success");
 			});
 
 		});

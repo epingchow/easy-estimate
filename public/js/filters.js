@@ -29,8 +29,33 @@ angular.module('myApp.filters', []).filter('userEstimate',['$sce',  function($sc
         count++;
       }
     });
-    console.log((sum/count).toFixed(1));
    return (count>0)? (sum/count).toFixed(1):'-';
+  };
+}]).filter('usersMean',[ function() {
+  return function(users) {
+    if(users && users.length<=0){
+      return '-'
+    }
+    var sum = 0;
+    var count = 0;
+    _.each(users,function(user){
+      if(user.point>=0){
+        sum+=user.point*1;
+        count++;
+      }
+    });
+    var avg = sum/count;
+    count=0;
+    var sum=0;
+    _.each(users,function(user){
+      if(user.point>=0){
+        var point=user.point*1;
+        sum+=Math.pow(avg-point,2);
+        count++;
+      }
+    });
+    var result =  Math.sqrt(sum/count).toFixed(1)
+   return (count>0)? result:'-';
   };
 }]).filter('maxUserName',[ function() {
   return function(users) {

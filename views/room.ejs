@@ -22,13 +22,15 @@
       color:#fff;
     }
   </style>
-  <div class="estimate-container" ng-controller="RoomCtrl">
-  <div>
+  <div class="estimate-container" ng-controller="RoomCtrl" ng-show="ready">
+  <div style="margin-top:10px;">
     <div >
     <span class="label pull-right" style="font-weight:normal;font-size:14px;leight-height:30px;padding:10px;" ng-class="{'label-success' : point_0 >= 0 && point_0!=='' ,'label-default' : point_0 < 0 || point_0 ==''}">
       {{ point_0 !=='' ? '估算 ：':'未提交'}} {{ point_0<0?'弃权':(point_0 + point_1) }}
     </span>
-        <h2> {{ name }} <small><a href=""  ng-click="changeName();"><i class="glyphicon glyphicon-pencil"></i></small>  </a></h2>
+    <button ng-click="changeName();" class="btn btn-primary">
+      {{ name }} <i class="glyphicon glyphicon-pencil"></i> 
+    </button>
     </div>
   </div>
     <table class="btn-estimate" style="width:100%;">

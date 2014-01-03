@@ -1,4 +1,20 @@
 <% include ./_head %>
+<div ng-controller="RoomCtrl">
+<div class="bg-modal" id="change-name-modal" style="display:none;">
+  <div style="margin-top:-85px;position:absolute;top:50%;left:0;width:100%;">
+   <div style="max-width:280px;margin:0 auto;">
+        <h1 class="text-center" style="color:#08C">设置昵称</h1>
+        <form role="form text-center" style="padding:20px;">
+            <div class="form-group">
+              <input type="text" id="name" class="form-control" ng-model="name" placeholder="昵称">
+            </div>
+            <button type="button" ng-hide="join" ng-click="joinRoom()" class="btn btn-primary btn-block">加入</button>
+            <button type="button" ng-show="join" ng-click="changeName()"  class="btn btn-primary btn-block">确定</button>
+            <button type="button" ng-click="hideModel();" class="btn btn-default btn-block">取消</button>
+       </form>
+    </div>
+  </div>
+</div>
 <div class="container">
   <style type="text/css">
   .btn-estimate td{
@@ -21,14 +37,17 @@
       background-color: #08C;
       color:#fff;
     }
+    html,body{
+      height:100%;
+    }
   </style>
-  <div class="estimate-container" ng-controller="RoomCtrl" ng-show="ready">
+  <div class="estimate-container" ng-show="ready">
   <div style="margin-top:10px;">
     <div >
     <span class="label pull-right" style="font-weight:normal;font-size:14px;leight-height:30px;padding:10px;" ng-class="{'label-success' : point_0 >= 0 && point_0!=='' ,'label-default' : point_0 < 0 || point_0 ==''}">
       {{ point_0 !=='' ? '估算 ：':'未提交'}} {{ point_0<0?'弃权':(point_0 + point_1) }}
     </span>
-    <button ng-click="changeName();" class="btn btn-primary">
+    <button ng-click="showModel();" class="btn btn-primary">
       {{ name }} <i class="glyphicon glyphicon-pencil"></i> 
     </button>
     </div>
@@ -82,5 +101,6 @@
 
   </div>
 
+</div>
 </div>
 <% include ./_foot %>

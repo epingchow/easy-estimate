@@ -82,6 +82,9 @@ controller('RoomCtrl', ['$scope', 'socket',
 		$scope.point_1 = '';
 		$scope.abstain = false;
 		$scope.ready=false;
+		$scope.join=false;
+
+
 		$scope.setPoint0 = function(num){
 			if(num<0)$scope.point_1=0;
 			$scope.point_0 = num;
@@ -96,21 +99,32 @@ controller('RoomCtrl', ['$scope', 'socket',
 
 		socket.on('ready', function() {
 			$scope.ready=true;
-			var name=prompt("请输入你的名字",$scope.name);
-			if(name != null)$scope.name=name;
+			$("#change-name-modal").show();
+			$("#name").focus();
+		});
+
+		$scope.showModel=function(){
+			$("#change-name-modal").show();
+		}
+
+		$scope.hideModel=function(){
+			$("#change-name-modal").hide();
+		}
+
+		$scope.joinRoom=function(){
 			socket.emit('join',$scope.name);
 			socket.on("join:success", function() {
 				//console.log("success");
+				$scope.hideModel();
 			});
-
-		});
+			$scope.join=true;
+		}
 
 		$scope.changeName = function() {
-			var name=prompt("你想改成什么名字",$scope.name);
-			if(name != null){
-				socket.emit('change:name',name);
+			if($scope.name != null){
+				socket.emit('change:name',$scope.name);
 				socket.on("change:success",function(){
-					$scope.name = name;
+					$scope.hideModel();
 				});
 			}
 		}

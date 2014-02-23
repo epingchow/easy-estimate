@@ -74,8 +74,8 @@ controller('HostCtrl', ['$scope', '$http', 'socket',
 controller('RoomCtrl', ['$scope', 'socket',
 	function($scope, socket) {
 		// prompt dialog
-		var _prefix =['羞涩的','神奇','只手遮天',"好色","威猛","奇怪的","风流的","疯癫的","面瘫","猪狗不如","一把正经","土豪","深井冰"];
-		var _names = ["王大锤","李狗蛋","楚中天","本拉登","小朋友","小师妹","老头子","小明","老王","奥巴马"];
+        var _prefix = ['羞涩的', '神奇', '只手遮天', "好色", "威猛", "奇怪的", "风流的", "疯癫的", "面瘫", "猪狗不如", "满面春风", "土豪"];
+        var _names = ["王大锤", "王尼玛", "楚中天", "本拉登", "小朋友", "小师妹", "唐马儒", "小明", "老王", "奥巴马"];
 		$scope.name=_prefix[parseInt(Math.random()*1000)%_prefix.length] + _names[parseInt(Math.random()*1000)%_names.length];
 		$scope.point = -1;
 		$scope.point_0 = '';
@@ -99,8 +99,17 @@ controller('RoomCtrl', ['$scope', 'socket',
 
 		socket.on('ready', function() {
 			$scope.ready=true;
-			$("#change-name-modal").show();
-			$("#name").focus();
+            var name;
+            if (localStorage) {
+                name = localStorage.getItem("cache:name");
+            }
+            if(!!name){
+            	$scope.name=name;
+            	$scope.joinRoom();
+            }else{
+				$("#change-name-modal").show();
+				$("#name").focus();
+            }
 		});
 
 		$scope.showModel=function(){
@@ -122,6 +131,9 @@ controller('RoomCtrl', ['$scope', 'socket',
 
 		$scope.changeName = function() {
 			if($scope.name != null){
+                if (localStorage) {
+                    localStorage.setItem("cache:name", $scope.name);
+                }
 				socket.emit('change:name',$scope.name);
 				socket.on("change:success",function(){
 					$scope.hideModel();

@@ -1,4 +1,10 @@
 <% include ./_head %>
+<script type="text/javascript" src="/lib/fastclick.js"></script>
+<script type="text/javascript">
+  $(function() {
+      FastClick.attach(document.body);
+  });
+</script>
 <div ng-controller="RoomCtrl">
 <div class="bg-modal" id="change-name-modal" style="display:none;">
   <div style="margin-top:-85px;position:absolute;top:50%;left:0;width:100%;">
@@ -94,7 +100,7 @@
       <button class="btn btn-default " ng-class="{active : point_0 === 0}" ng-click="setPoint0(0)">0</button>
       </td>
         <td>
-      <button class="btn btn-default " ng-class="{active : point_1 === 0.5}" ng-click="togglePoint1();" >0.5</button>
+      <button class="btn btn-default " ng-class="{active : point_1 === 0.5}" ng-click="togglePoint1();" >+0.5</button>
       </td>
       </tr>
     </table>
